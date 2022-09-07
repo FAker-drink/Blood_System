@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>血液价格</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.ico">
+    <link rel="stylesheet" href="../element-theme/blue/index.css">
+</head>
+
+<body>
+<div class="data-manage-table">
+    <template>
+        <el-form ref="form" :inline="true"  style="padding:20px 20px 0 20px;">
+            <!-- <el-button type="primary" style="margin-right: 40px;">批量删除</el-button> -->
+            <el-form-item label ="血液价格表">
+            </el-form-item>
+
+            <el-form-item>
+
+                <el-button type="primary" @click="load">刷新</el-button>
+                <el-button  @click="dialogVisible = true">导出</el-button>
+            </el-form-item>
+        </el-form>
+
+        <el-table :data="tableData" style="width: 100%" border
+                  :header-cell-style="{'text-align': 'center','background': '#eef1f6'}" highlight-current-row
+                  @current-change="">
+            <el-table-column type="selection" width="55" align="center"></el-table-column>
+
+            <el-table-column prop="id" label="血液种类id" min-width="10%" align="center">
+            </el-table-column>
+
+            <el-table-column prop="priceExecutionNumber" label="价格执行文号" min-width="15%" align="center">
+            </el-table-column>
+
+            <el-table-column prop="priceExecutionDate" label="价格执行时间" min-width="20%" align="center">
+<!--                <template slot-scope="scope">-->
+<!--                    <i class="el-icon-time"></i>-->
+<!--                    <span style="margin-left: 10px">{{scope.row.Acquisition_date}}</span>-->
+<!--                </template>-->
+            </el-table-column>
+
+            <el-table-column prop="bloodType" label="血液类型" min-width="15%" align="center">
+            </el-table-column>
+
+            <el-table-column prop="bloodPrice" label="血液价格" min-width="15%" align="center">
+            </el-table-column>
+
+            <el-table-column prop="blood_unit" label="血液单位" min-width="15%" align="center">
+            </el-table-column>
+        </el-table>
+
+        <el-pagination :page-size="10" :total="30" :current-page="5" layout="prev, pager, next, jumper"
+                       class="pagination" @current-change="" style="text-align: center; margin-top: 20px;" />
+    </template>
+</div>
+
+<script src="../plugins/vue-2.5.17/vue.js"></script>
+<script src="../plugins/element-2.4.5/index.js"></script>
+<script src="../icons/iconfont.js"></script>
+<script>Vue.prototype.$ELEMENT = { size: 'medium' };</script>
+<script>
+    (function () {
+        var vm = window.vm = new Vue({
+            el: '.data-manage-table',
+            data() {
+                return {
+
+                    tableData: [
+                        {
+                            id:'',
+                            priceExecutionNumber:'',
+                            priceExecutionDate:'',
+                            bloodType:'',
+                            bloodPrice:'',
+                            blood_unit:''
+                        }
+
+                    ],
+
+                    //新增样本表单验证
+                }
+            },
+            created() {
+                this.load()
+            },
+            methods: {
+                load() {
+                    // 请求所有用户数据  `` 是 ES6的模板字符串语法
+                    fetch(`/partmyself/bloodPrice/getBloodPrice`).then(res => res.json()).then(res => {
+                        this.tableData = res.data
+                        console.log(res.data)
+                    })
+                }
+            }
+
+        });
+    })()
+</script>
+
+</body>
+
+</html>

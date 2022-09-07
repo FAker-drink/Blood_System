@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>患者费用明细查询</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.ico">
+    <link rel="stylesheet" href="../element-theme/blue/index.css">
+</head>
+
+<body>
+<div class="data-manage-table">
+    <template>
+        <el-form ref="form" :inline="true" style="padding:20px 20px 0 20px;"
+                 @submit.native.prevent
+        >
+            <!-- <el-button type="primary" style="margin-right: 40px;">批量删除</el-button> -->
+            <el-form-item label="病例号">
+                <el-input placeholder="请输入病例号" v-model="idcode" @keyup.enter.native="load"></el-input>
+            </el-form-item>
+
+            <el-form-item>
+                <el-button type="primary"@click="load" >搜索</el-button>
+                <el-button type="">导出</el-button>
+                <el-button type="">打印</el-button>
+                <el-switch size="medium"
+                    style="position:fixed;top:35px;right:50px"
+                    active-text="显示未支付订单"
+                    inactive-text="显示全部订单"
+                    font-size="50px"
+                    v-model="payState"
+                    active-color="#00A854"
+                    active-value="1"
+                    inactive-color="#F04134"
+                    inactive-value="0"
+                    @change="load()"
+            >
+            </el-switch>
+            </el-form-item>
+
+
+
+        </el-form>
+
+
+        <el-table :data="tableData" style="width: 1620px" border
+                  :header-cell-style="{'text-align': 'center','background': '#eef1f6'}" highlight-current-row
+                  @current-change=""
+        >
+            <el-table-column type="selection" width="55" align="center"></el-table-column>
+
+            <el-table-column prop="name" label="姓名" min-width="10%" align="center">
+            </el-table-column>
+
+            <el-table-column prop="bloodType" label="血液类型" min-width="15%" align="center">
+            </el-table-column>
+
+            <el-table-column prop="serialNumber" label="血液ID" min-width="15%" align="center">
+            </el-table-column>
+
+            <el-table-column prop="hp" label="血液数量" min-width="10%" align="center">
+            </el-table-column>
+
+            <el-table-column prop="department" label="科室" min-width="12%" align="center">
+            </el-table-column>
+
+            <el-table-column prop="generateTime" label="订单生成时间" min-width="15%" align="center">
+            </el-table-column>
+
+            <el-table-column prop="payMoney" label="支付金额" min-width="12%" align="center">
+            </el-table-column>
+
+
+        </el-table>
+
+        <el-dialog title="费用统计" center :visible.sync="caculateState" width="45%" >
+            <el-table :data="payForm" style="min-width: 80%" border
+                      :header-cell-style="{'text-align': 'center','background': '#eef1f6'}" highlight-current-row
+                      @current-change="">
+            <el-table-column prop="name" label="姓名" min-width="33%" align="center">
+            </el-table-column>
+            <el-table-column prop="patientId" label="病历号" min-width="33%" align="center">
+            </el-table-column>
+            <el-table-column prop="totalMoney" label="总计费用" min-width="33%" align="center">
+            </el-table-column>
+
+            </el-table>
+            <span slot="footer" class="dialog-footer">
+                    <el-button @click="cancel()">取 消</el-button>
+                    <el-button type="primary" @click="">支付</el-button>
+                </span>
+        </el-dialog>
+        <el-row style="margin-top: 30px">
+            <el-button type="primary" @click="sum" style="position:fixed;left:75%">统计费用</el-button>
+        </el-row>
+
+    </template>
+</div>
+
+<script src="../plugins/vue-2.5.17/vue.js"></script>
+<script src="../plugins/element-2.4.5/index.js"></script>
+<script src="../icons/iconfont.js"></script>
+<script>Vue.prototype.$ELEMENT = { size: 'medium' };</script>
+<script>
+    (function () {
+        var vm = window.vm = new Vue({
+            el: '.data-manage-table',
+            data() {
+                return {
+                    //样本状态选择
+                    idcode:'',
+                    payState:'0',
+                    //费用窗口结算
+                    caculateState:false,
+                    //表格信息
+                    tableData: [
+                        {
+                            name: '',
+                            generateTime: '',
+                            bloodType: '',
+                            serialNumber: '',
+                            hp: '',
+                            department: '',
+                            payMoney: '',
+                            payState: '',
+                            patientId:''
+                        }
+                    ],
+                    payForm:[
+                        {
+                        name: '',
+                        patientId:'',
+                        totalMoney:''
+                    }]
+                }
+            },
+            created() {
+                // this.load()
+            },
+            methods: {
+                load() {
+                    this.tableData=undefined;
+                    fetch(`/partmyself/patientTransfusionInformation//getPayPriceList?payState=${this.payState}&patientId=${this.idcode}`).then(res => res.json()).then(res => {
+                        this.tableData = res.data
+
+                        console.log(res.data)
+                    })
+                },
+                sum(){
+                    fetch(`/partmyself/patientTransfusionInformation/getPayPrice?patientId=${this.idcode}`).then(res => res.json()).then(res => {
+                        this.payForm[0].totalMoney=res.data[0].totalMoney
+                        this.payForm[0].patientId=this.idcode
+                        this.payForm[0].name=this.tableData[0].name
+                        this.caculateState=true
+                        console.log(this.payForm)
+                    })
+                },
+                cancel(){
+                    this.payForm.name=''
+                    this.payForm.patientId= ''
+                    this.payForm.totalMoney = ''
+                    this.caculateState = false
+                }
+            }
+        });
+    })()
+</script>
+
+</body>
+
+</html>

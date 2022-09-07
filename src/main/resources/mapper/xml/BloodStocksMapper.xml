@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.formal.partmyself.mapper.BloodStocksMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.formal.partmyself.pojo.entity.BloodStocks">
+        <id column="blood_id" property="bloodId" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified " property="gmtModified " />
+        <result column="variety_of_blood" property="varietyOfBlood" />
+        <result column="hp" property="hp" />
+        <result column="rh_blood_type" property="rhBloodType" />
+        <result column="abo_blood_type" property="aboBloodType" />
+        <result column="blood_failure_time" property="bloodFailureTime" />
+        <result column="blood_position" property="bloodPosition" />
+        <result column="blood_storge_time" property="bloodStorgeTime" />
+        <result column="blood_stocks_condition" property="bloodStocksCondition" />
+    </resultMap>
+
+</mapper>

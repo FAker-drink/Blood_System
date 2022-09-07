@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.formal.partmyself.mapper.BloodFlowReportMapper">
+
+    <select id="getBloodFlowReport" resultType="com.formal.partmyself.pojo.VO.BloodFlowReport">
+        DROP TABLE IF EXISTS tmp_table;
+        CREATE TEMPORARY TABLE tmp_table
+        (
+            abo_blood_type VARCHAR(50),
+            rh_blood_type VARCHAR(50),
+            blood_type VARCHAR(50),
+            total_out_hp DECIMAL(50),
+            total_in_hp DECIMAL(50),
+            total_fail_hp DECIMAL(50)
+        );
+        INSERT  INTO tmp_table(abo_blood_type, rh_blood_type,  blood_type, total_out_hp) (SELECT blood.abo_blood_type,blood.rh_blood_type,blood.blood_components,
+                                                                                                 sum(blood.hp) as totalOutHp
+                                                                                          FROM blood_outbound outbound , blood_base_information blood
+                                                                                          WHERE outbound.blood_id=blood.blood_id and outbound.outbound_time BETWEEN '2022-08-08 16:45:59' and '2022-08-25 16:45:59'
+                                                                                          group by  blood.abo_blood_type,blood.rh_blood_type,blood.blood_components);
+        INSERT  INTO tmp_table(abo_blood_type, rh_blood_type,  blood_type, total_in_hp) (SELECT blood.abo_blood_type,blood.rh_blood_type,blood.blood_components,
+                                                                                                sum(blood.hp) as totalInHp
+                                                                                         FROM blood_inbound inbound , blood_base_information blood
+                                                                                         WHERE inbound.blood_id=blood.blood_id and inbound.inbound_time BETWEEN '2022-08-08 16:45:59' and '2022-08-25 16:45:59'
+                                                                                         group by  blood.abo_blood_type,blood.rh_blood_type,blood.blood_components);
+        INSERT  INTO tmp_table(abo_blood_type, rh_blood_type,  blood_type, total_fail_hp) (SELECT stocks.abo_blood_type, stocks.rh_blood_type,stocks.variety_of_blood,
+                                                                                                  sum(stocks.hp) as totalFailHp
+                                                                                           FROM blood_stocks stocks
+                                                                                           WHERE blood_failure_time BETWEEN'2022-08-03 16:45:59' AND '2022-08-24 16:45:59' AND blood_stocks_condition = 1
+                                                                                           group by stocks.variety_of_blood,stocks.rh_blood_type,stocks.abo_blood_type);
+        select sum(total_out_hp) AS total_out_hp,sum(total_in_hp) as total_in_hp,sum(total_fail_hp) as total_fail_hp,abo_blood_type , rh_blood_type ,blood_type
+        from tmp_table group by abo_blood_type,rh_blood_type,blood_type;
+    </select>
+</mapper>

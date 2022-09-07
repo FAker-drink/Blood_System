@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.formal.partmyself.mapper.PatientTransfusionInformationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.formal.partmyself.pojo.entity.PatientTransfusionInformation">
+        <id column="id" property="id" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="name" property="name" />
+        <result column="genenrate_time" property="genenrateTime" />
+        <result column="blood_type" property="bloodType" />
+        <result column="hp" property="hp" />
+        <result column="department" property="department" />
+        <result column="pay_money" property="payMoney" />
+        <result column="pay_state" property="payState" />
+        <result column="serial_number" property="serialNumber" />
+        <result column="patient_id" property="patientId" />
+    </resultMap>
+
+</mapper>

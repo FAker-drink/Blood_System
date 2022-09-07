@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.formal.partmyself.mapper.BloodBaseInformationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.formal.partmyself.pojo.entity.BloodBaseInformation">
+        <id column="serial_number" property="serialNumber" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="bar_code_number" property="barCodeNumber" />
+        <result column="extend_the_code" property="extendTheCode" />
+        <result column="blood_components" property="bloodComponents" />
+        <result column="hp" property="hp" />
+        <result column="abo_blood_type" property="aboBloodType" />
+        <result column="rh_blood_type" property="rhBloodType" />
+        <result column="the_failure_time" property="theFailureTime" />
+        <result column="acquisition_time" property="acquisitionTime" />
+        <result column="blood_source" property="bloodSource" />
+        <result column="state" property="state" />
+        <result column="amount_of_inventory" property="amountOfInventory" />
+        <result column="blood_id" property="bloodId" />
+        <result column="bloodbags_position" property="bloodbagsPosition" />
+        <result column="blood_amount" property="bloodAmount" />
+    </resultMap>
+
+</mapper>

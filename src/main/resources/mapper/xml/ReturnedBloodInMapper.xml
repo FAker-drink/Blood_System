@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.formal.partmyself.mapper.ReturnedBloodInMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.formal.partmyself.pojo.entity.ReturnedBloodIn">
+        <id column="serial_number" property="serialNumber" />
+        <result column="gmt_creat" property="gmtCreat" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="type_of_return" property="typeOfReturn" />
+        <result column="blood_back_information" property="bloodBackInformation" />
+        <result column="blood_information" property="bloodInformation" />
+        <result column="operationer" property="operationer" />
+        <result column="number_of_ operationer" property="numberOfoperationer" />
+        <result column="date_of_blood_enter" property="dateOfBloodEnter" />
+    </resultMap>
+
+</mapper>

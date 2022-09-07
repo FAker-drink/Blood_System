@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.formal.partmyself.mapper.BloodOutboundMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.formal.partmyself.pojo.entity.BloodOutbound">
+        <id column="id" property="id" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="outbound_number" property="outboundNumber" />
+        <result column="blood_information" property="bloodInformation" />
+        <result column="outbound_reason" property="outboundReason" />
+        <result column="outbound_time" property="outboundTime" />
+        <result column="outbound_location" property="outboundLocation" />
+        <result column="blood_taker" property="bloodTaker" />
+        <result column="blood_taker_number" property="bloodTakerNumber" />
+        <result column="operator" property="operator" />
+        <result column="operator_number" property="operatorNumber" />
+        <result column="blood_id" property="bloodId" />
+    </resultMap>
+
+</mapper>
