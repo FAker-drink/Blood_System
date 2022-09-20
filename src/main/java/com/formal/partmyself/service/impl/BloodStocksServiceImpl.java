@@ -1,5 +1,6 @@
 package com.formal.partmyself.service.impl;
 
+import cn.hutool.core.lang.Console;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -54,11 +55,12 @@ public class BloodStocksServiceImpl extends ServiceImpl<BloodStocksMapper, Blood
     public List<BloodStocks> listBloodAboRh(String abo, String rh,String except) {
         QueryWrapper<BloodStocks> wrapper = new QueryWrapper<>();
         wrapper.eq("abo_blood_type",abo)
-                .eq("rh_blood_type",rh);
-//        仅显示可用状态的血液
-        if(except=="1"){
-            wrapper.eq("blood_stocks_condition",0);
-        }
+                .eq("rh_blood_type",rh)
+                .eq("blood_stocks_condition",except);
+        Console.log(abo);
+        Console.log(rh);
+        Console.log(except);
+        Console.log(this.list(wrapper));
         List<BloodStocks> list = this.list(wrapper);
         return list;
     }
@@ -67,7 +69,10 @@ public class BloodStocksServiceImpl extends ServiceImpl<BloodStocksMapper, Blood
     @Override
     public List<BloodStocks> listBloodUseful(String bloodCon) {
         QueryWrapper<BloodStocks> wrapper = new QueryWrapper<>();
-        wrapper.eq("blood_stocks_condition",bloodCon);
+        Console.log(bloodCon);
+        if(bloodCon.equals("1")){
+            wrapper.ne("blood_stocks_condition",bloodCon);
+        }
         List<BloodStocks> list = this.list(wrapper);
         System.out.println(list.getClass().toString());
         return list;
@@ -78,7 +83,7 @@ public class BloodStocksServiceImpl extends ServiceImpl<BloodStocksMapper, Blood
         QueryWrapper<BloodStocks> bloodNumber =new QueryWrapper<>();
         bloodNumber.groupBy("abo_blood_type", "rh_blood_type","variety_of_blood")
                 .gt("TO_DAYS(blood_failure_time)","TO_DAYS(NOW())")
-                .ne("blood_stocks_condition","2")
+                .eq("blood_stocks_condition","0")
                 .select("variety_of_blood,abo_blood_type,rh_blood_type,IFNULL(sum(hp),0)  as totalHp");
         List<Map<String, Object>> maps = this.listMaps(bloodNumber);
         System.out.println(maps.getClass().toString());

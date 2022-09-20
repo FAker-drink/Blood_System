@@ -38,9 +38,10 @@ public class BloodBaseInformationController {
     @GetMapping("/getPersonBloodInfo")
     @ResponseBody
     public Result getPersonBloodInfo(@RequestParam(value = "patientId")BigDecimal patientId,
-                          @RequestParam(value = "startTime") @DateTimeFormat(pattern="yyyy-MM-dd HH:mm") Timestamp startTime,
-                          @RequestParam(value = "endTime") @DateTimeFormat(pattern="yyyy-MM-dd HH:mm") Timestamp endTime) {
-
+                                     @RequestParam(value = "startTime")  String startTimePatient,
+                                     @RequestParam(value = "endTime") String endTimePatient) {
+        Timestamp startTime = Timestamp.valueOf(startTimePatient);
+        Timestamp endTime = Timestamp.valueOf(endTimePatient);
         return Result.success(personBloodInfoService.getPersonBloodInfo(patientId,startTime,endTime));
     }
     /**
@@ -54,7 +55,7 @@ public class BloodBaseInformationController {
     @ResponseBody
     public Result getDepartBloodInfo(@RequestParam(value = "department")String department,
                                      @RequestParam(value = "startTime")  String startTime,
-                          @RequestParam(value = "endTime") String endTime) {
+                                     @RequestParam(value = "endTime") String endTime) {
 
         Timestamp startTime1 = Timestamp.valueOf(startTime);
         Timestamp endTime1 = Timestamp.valueOf(endTime);

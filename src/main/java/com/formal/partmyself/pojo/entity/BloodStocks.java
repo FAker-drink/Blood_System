@@ -6,10 +6,13 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import java.util.Date;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * <p>
@@ -49,12 +52,16 @@ public class BloodStocks extends Model<BloodStocks> {
       @ApiModelProperty(value = "ABO血型码")
       private String aboBloodType;
 
+      @DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")
+      @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
       @ApiModelProperty(value = "血液失效的公元纪年日期时间")
       private Date bloodFailureTime;
 
       @ApiModelProperty(value = "血液所在库存具体位置描述")
       private String bloodPosition;
 
+      @DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")
+      @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
       @ApiModelProperty(value = "血液入库的公元纪年日期时间")
       private Date bloodStorgeTime;
 
