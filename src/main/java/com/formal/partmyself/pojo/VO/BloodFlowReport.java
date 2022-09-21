@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
+
 @Data
 public class BloodFlowReport {
         @ApiModelProperty(value = "血液成分")

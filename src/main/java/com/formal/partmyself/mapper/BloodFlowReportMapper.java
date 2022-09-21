@@ -50,4 +50,6 @@ public interface BloodFlowReportMapper extends BaseMapper<BloodFlowReport> {
     @Select("select blood_type,abo_blood_type,rh_blood_type,sum(total_out_hp) as total_out_hp,sum(total_in_hp) as total_in_hp,sum(total_fail_hp) as total_fail_hp from tmp_table group by abo_blood_type,rh_blood_type,blood_type;")
     List<BloodFlowReport> getBloodFlowReports();
 
+    ;
+
 }
