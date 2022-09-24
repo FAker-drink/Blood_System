@@ -47,4 +47,6 @@ public class BloodFlowReportServiceImpl extends ServiceImpl<BloodFlowReportMappe
         };
         return answer;
     }
+
+
 }

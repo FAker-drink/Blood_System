@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -94,19 +95,29 @@ public class BloodBaseInformationController {
         HashMap<String, Object> getResult=new HashMap<>();
         bloodBaseInformationService.getFrom(bloodId).forEach(getResult::put);
         List<BloodStocks> bloodListAlone= bloodStocksService.listBloodAlone(bloodId);
+        System.out.println(bloodListAlone);
         String placeState = bloodListAlone.get(0).getBloodStocksCondition();
-
+        String varietyOfBlood =bloodListAlone.get(0).getVarietyOfBlood();
+        BigDecimal hp= bloodListAlone.get(0).getHp();
+        String rhBloodType =bloodListAlone.get(0).getRhBloodType();
+        String aboBloodType =bloodListAlone.get(0).getAboBloodType();
+        getResult.put("varietyOfBlood",varietyOfBlood);
+        getResult.put("hp",hp);
+        getResult.put("rhBloodType",rhBloodType);
+        getResult.put("aboBloodType",aboBloodType);
         if (placeState.equals("0")||placeState.equals("1")) {
-            getResult.put("place_State",placeState);
+            getResult.put("placeState",placeState);
             //为0代表未过期;为1代表已过期
             getResult.put("stay","库内："+bloodListAlone.get(0).getBloodPosition());
             System.out.println(getResult);
             return Result.success(getResult);
         } else if(placeState.equals("2")){
             patientTransfusionInformationService.getGO(bloodId).forEach(getResult::put);
-            getResult.put("stay","已出库：");
+            getResult.put("stay","已出库");
             System.out.println(getResult);
-            return Result.success(getResult);
+            List myList = new ArrayList();
+            myList.add(getResult);
+            return Result.success(myList);
         }else {
             return Result.fail();
         }

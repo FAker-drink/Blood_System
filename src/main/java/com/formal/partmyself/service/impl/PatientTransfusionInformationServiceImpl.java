@@ -64,8 +64,9 @@ public class PatientTransfusionInformationServiceImpl extends ServiceImpl<Patien
     public HashMap<String, Object> getGO(String bloodId) {
         LambdaQueryWrapper<PatientTransfusionInformation> wrapper =new LambdaQueryWrapper<>();
         wrapper.eq(PatientTransfusionInformation::getSerialNumber,bloodId)
-                .select(PatientTransfusionInformation::getName,PatientTransfusionInformation::getDepartment);
+                .select(PatientTransfusionInformation::getName,PatientTransfusionInformation::getDepartment,PatientTransfusionInformation::getPatientId);
         HashMap<String,Object> map = (HashMap<String, Object>) this.listMaps(wrapper).get(0);
+        System.out.println(map);
         return map;
     }
 

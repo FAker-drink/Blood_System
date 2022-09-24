@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>科室血液报表</title>
+    <title>血液流通平衡表查询</title>
     <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.ico">
-    <link rel="stylesheet" href="../../element-theme/blue/index.css">
+    <link rel="stylesheet" href="../element-theme/blue/index.css">
     <script src="../echarts.js"></script>
 </head>
 
@@ -16,57 +16,54 @@
         <el-form ref="form" :inline="true" style="padding:20px 20px 0 20px;"
                  @submit.native.prevent
         >
-            <!-- <el-button type="primary" style="margin-right: 40px;">批量删除</el-button> -->
-            <el-form-item label="科室">
-                <el-input placeholder="请输入科室" v-model="department" @keyup.enter.native="load"></el-input>
-            </el-form-item>
             <el-form-item label="日期">
                 <el-date-picker v-model="formDate" type="datetimerange" size="small" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"
                                 range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
                 </el-date-picker>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary"@click="load" >搜索</el-button>
+                <el-button type="primary"@click="load" >刷新</el-button>
                 <el-button type="">导出</el-button>
-<!--                <el-button type="primary"@click="gettable" >生成统计图</el-button>-->
+                <!--                <el-button type="primary"@click="gettable" >生成统计图</el-button>-->
             </el-form-item>
 
 
 
         </el-form>
 
-
-        <el-table :data="tableData" style="width: 1620px" border
+        <el-table :data="tableData" style="width: 100%" border
                   :header-cell-style="{'text-align': 'center','background': '#eef1f6'}" highlight-current-row
-                  @current-change=""
-        >
-            <el-table-column prop="department" label="科室" min-width="12%" align="center">
+                  @current-change="">
+            <el-table-column type="selection" width="55" align="center"></el-table-column>
+
+            <el-table-column prop="bloodType" label="血液种类" min-width="10%" align="center">
             </el-table-column>
 
-            <el-table-column prop="bloodComponents" label="血液类型" min-width="15%" align="center">
+            <el-table-column prop="aboBloodType" label="血液abo类型" min-width="10%" align="center">
             </el-table-column>
 
-            <el-table-column prop="totalHp" label="血液数量" min-width="10%" align="center">
+            <el-table-column prop="rhBloodType" label="血液rh类型" min-width="10%" align="center">
             </el-table-column>
-            <el-table-column prop="aboBloodType" label="ABO类型" min-width="10%" align="center">
+            <el-table-column prop="totalInHp" label="血液入库总量" min-width="15%" align="center">
             </el-table-column>
-            <el-table-column prop="rhBloodType" label="rh类型" min-width="10%" align="center">
+            <el-table-column prop="totalOutHp" label="血液出库总量" min-width="15%" align="center">
             </el-table-column>
-
+            <el-table-column prop="totalFailHp" label="血液失效总量" min-width="15%" align="center">
+            </el-table-column>
+            <el-table-column prop="cleanIncrease" label="血液净增量" min-width="10%" align="center">
+            </el-table-column>
         </el-table>
 
         <el-row :gutter="20">
             <el-col :span="12"><div id="main1" style="border:1px;width:80%;min-height:300px;height:auto;margin-top:5%;"></div></el-col>
             <el-col :span="12"><div id="main" style="border:1px ;width:80%;min-height:300px;height:auto;margin-top:5%;"></div></el-col>
-
         </el-row>
     </template>
 </div>
 
-<script src="../../plugins/vue-2.5.17/vue.js"></script>
-<script src="../../plugins/element-2.4.5/index.js"></script>
-<script src="../../icons/iconfont.js"></script>
-
+<script src="../plugins/vue-2.5.17/vue.js"></script>
+<script src="../plugins/element-2.4.5/index.js"></script>
+<script src="../icons/iconfont.js"></script>
 <script>Vue.prototype.$ELEMENT = { size: 'medium' };</script>
 <script>
 
@@ -76,7 +73,6 @@
             data() {
                 return {
                     //部门选择
-                    department:'',
 
                     //时间数据的存放
                     formDate:[],
@@ -84,17 +80,13 @@
                     //表格信息
                     tableData: [
                         {
-                            department:'',
-                            bloodComponents: "",
-                            totalHp: "",
+                            bloodType: "",
                             aboBloodType: "",
-                            rhBloodType: ""
-                        }
-                    ],
-                    temptable:[
-                        {
-                            bloodComponents: "",
-                            totalHp: "",
+                            rhBloodType: "",
+                            totalOutHp:"",
+                            totalInHp: "",
+                            totalFailHp: "",
+                            cleanIncrease:""
                         }
                     ]
                 }
@@ -106,16 +98,16 @@
                 dateFormat(picker){
                     this.formDate = [picker[0], picker[1]]
                 },
-                myEcharts(mycars,mycarstow){
+                myEcharts(bloodTy,bloodIn,bloodOut,bloodFail,bloodIncrease){
                     //实例化
                     const mychart1 = echarts.init(document.getElementById('main1'));
                     const option = {
                         legend: {
-                            data: ['科室血液使用情况']
+                            data: ['入库血量','出库血量','失效血量','净增血量']
                         },
                         xAxis: {
                             type: 'category',
-                            data: mycars,
+                            data: bloodTy,
                             axisLabel: {
                                 borderWidth: 1,
                                 clickable: true
@@ -128,40 +120,76 @@
                         },
                         series: [
                             {
-                                name: '科室血液使用情况',
+                                name: '入库血量',
                                 type: 'bar',
-                                data: mycarstow
+                                data: bloodIn
+                            },
+                            {
+                                name: '出库血量',
+                                type: 'bar',
+                                data: bloodOut
+                            },
+                            {
+                                name: '失效血量',
+                                type: 'bar',
+                                data: bloodFail
+                            }
+                            ,
+                            {
+                                name: '净增血量',
+                                type: 'bar',
+                                data: bloodIncrease
                             }
                         ]
                     };
                     mychart1.setOption(option);
                     mychart1.on('click', (params)=> {
-                        if(params.componentType == "xAxis"){
-                            alert("单击了"+params.value+"x轴标签");
-                            console.log(this.tableData)
-                            this.pieChart(params.value);
+                        if(params.componentType == "series"){
+                            alert("单击了"+params.seriesIndex +"series");
+                            console.log(params)
+                            this.pieChart(params.name,params.seriesIndex);
                         }else{
-                            alert("单击了"+params.name+"柱状图");
+                            alert("单击了"+params+"柱状图");
                         }
                     });
                 },
-                pieChart(valuement){
-                    var myChart = echarts.init(document.getElementById('main'));
+                pieChart(bloodName,seriesIndex){
+                    let myChart = echarts.getInstanceByDom(document.getElementById('main')); //有的话就获取已有echarts实例的DOM节点。
+                    if (myChart == null) { // 如果不存在，就进行初始化。
+                        myChart = echarts.init(document.getElementById('main'));
+                    };
+
                     let arr = Array.from(this.tableData)
                     // console.log(arr)
-                    var abo=new Array();//string型数组
-                    var rh=new Array();//int型数组
-                    var name = new Array();
+                    const abo = new Array();//string型数组
+                    const rh = new Array();//int型数组
+                    const useTower = new Array();
+                    const name = new Array();
                     for (let i = 0; i < arr.length; i++) {
-
-                        if (arr[i].bloodComponents == valuement) {
-                            abo.push({value:arr[i].totalHp,name:arr[i].aboBloodType});
-                            rh.push({value:arr[i].totalHp,name:arr[i].rhBloodType});
+                        //用来判断查看哪种数据的详细统计
+                        if (arr[i].bloodType == bloodName &&seriesIndex==0 ) {
+                            abo.push({value:arr[i].totalInHp,name:arr[i].aboBloodType});
+                            rh.push({value:arr[i].totalInHp,name:arr[i].rhBloodType});
                             name.push(arr[i].rhBloodType,arr[i].aboBloodType);
+                            useTower.push(name+"totalInHp")
+                        } else if(arr[i].bloodType == bloodName &&seriesIndex==1 ) {
+                            abo.push({value:arr[i].totalOutHp,name:arr[i].aboBloodType});
+                            rh.push({value:arr[i].totalOutHp,name:arr[i].rhBloodType});
+                            name.push(arr[i].rhBloodType,arr[i].aboBloodType);
+                            useTower.push(name+"totalOutHp")
+                        }else if(arr[i].bloodType == bloodName &&seriesIndex==2 ) {
+                            abo.push({value:arr[i].totalFailHp,name:arr[i].aboBloodType});
+                            rh.push({value:arr[i].totalFailHp,name:arr[i].rhBloodType});
+                            name.push(arr[i].rhBloodType,arr[i].aboBloodType);
+                            useTower.push(name+"totalFailHp")
+                        }else if(arr[i].bloodType == bloodName &&seriesIndex==3 ) {
+                            abo.push({value:arr[i].cleanIncrease,name:arr[i].aboBloodType});
+                            rh.push({value:arr[i].cleanIncrease,name:arr[i].rhBloodType});
+                            name.push(arr[i].rhBloodType,arr[i].aboBloodType);
+                            useTower.push(name+"cleanIncrease")
                         }
                     }
-                    console.log(name)
-                    console.log(typeof name)
+                    console.log(abo)
                     option = {
                         tooltip: {
                             trigger: 'item',
@@ -183,7 +211,7 @@
                                 labelLine: {
                                     show: false
                                 },
-                                data: rh
+                                data: rh 
                             },
                             {
                                 name: 'ABO',
@@ -228,24 +256,39 @@
                             }
                         ]
                     };
+                    myChart.clear();
                     myChart.setOption(option);
                 },
                 draw(){
                     let arr = Array.from(this.tableData)
                     // console.log(arr)
-                    let item = {};
+                    let itemIn = {};
+                    let itemOut = {};
+                    let itemFail = {};
+                    let itemIncrease={};
                     for (let i = 0; i < arr.length; i++) {
-                        item[arr[i].bloodComponents] = ~~item[arr[i].bloodComponents] + arr[i].totalHp;
+                        itemIn[arr[i].bloodType] = ~~itemIn[arr[i].bloodType] + arr[i].totalInHp;
+                        itemOut[arr[i].bloodType] = ~~itemOut[arr[i].bloodType] + arr[i].totalOutHp;
+                        itemFail[arr[i].bloodType] = ~~itemFail[arr[i].bloodType] + arr[i].totalFailHp;
+                        itemIncrease[arr[i].bloodType] = ~~itemIncrease[arr[i].bloodType] + arr[i].cleanIncrease;
+                        console.log( arr[i].cleanIncrease)
                     }
-                    console.log(item);
-                    const mycars = new Array();//string型数组
-                    const mycarstow = new Array();//int型数组
+                    ;
+                    const bloodTy = new Array();//string型数组
+                    const bloodIn = new Array();//int型数组
+                    const bloodOut = new Array();//int型数组
+                    const bloodFail = new Array();//int型数组
+                    const bloodIncrease = new Array();//int型数组
                     //先加载后台数据 对获取的数据进行分组 且写入对应位置的数组中
-                    Object.keys(item).forEach(function (key) {
-                        mycars.push(key);
-                        mycarstow.push(item[key]);
+                    Object.keys(itemIn).forEach(function (key) {
+                        bloodTy.push(key);
+                        bloodIn.push(itemIn[key]);
+                        bloodOut.push(itemOut[key]);
+                        bloodFail.push(itemFail[key]);
+                        bloodIncrease.push(itemIncrease[key]);
                     })
-                    this.myEcharts(mycars,mycarstow);
+                    console.log(bloodIncrease)
+                    this.myEcharts(bloodTy,bloodIn,bloodOut,bloodFail,bloodIncrease);
 
                 },
                 load() {
@@ -253,7 +296,7 @@
                     this.tableData=undefined
                     // console.log(typeof this.formDate[0])
                     // console.log(this.department)
-                    fetch(`/partmyself/bloodBaseInformation/getDepartBloodInfo?department=${this.department}&startTime=${this.formDate[0]} &endTime=${this.formDate[1]}`).then(res => res.json()).then(res => {
+                    fetch(`http://localhost:9999/partmyself/bloodBaseInformation/getBloodFlowReport?startTime=${this.formDate[0]} &endTime=${this.formDate[1]}`).then(res => res.json()).then(res => {
                         this.tableData = res.data
                         //此是this的指向已经转变为method而非实例所以采用bind绑定this
                         this.$options.methods.draw.bind(this)();

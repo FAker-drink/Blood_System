@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>血液流通平衡表查询</title>
+    <title>血液追踪</title>
     <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.ico">
     <link rel="stylesheet" href="../element-theme/blue/index.css">
     <script src="echarts.js"></script>
@@ -13,70 +13,44 @@
 <body>
 <div class="data-manage-table">
     <template>
-        <el-form ref="form" :inline="true"  style="padding:20px 20px 0 20px;">
-            <el-form-item label ="血液价格表">
-            </el-form-item>
 
-            <el-form-item label="ABO">
-                <el-select v-model="aboBloodType">
-                    <el-option v-for="item in aboOptions" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
-                </el-select>
-            </el-form-item>
-
-            <el-form-item label="Rh">
-                <el-select v-model="rhBloodType">
-                    <el-option v-for="item in rhOptions" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
-                </el-select>
-            </el-form-item>
-
-            <el-form-item label="状态">
-                <el-select v-model="bloodStocksCondition">
-                    <el-option v-for="item in conOptions" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
-                </el-select>
+        <el-form ref="form" :inline="true" style="padding:20px 20px 0 20px;"
+                 @submit.native.prevent
+        >
+            <!-- <el-button type="primary" style="margin-right: 40px;">批量删除</el-button> -->
+            <el-form-item label="血液ID">
+                <el-input placeholder="请输入血液ID" v-model="bloodId" @keyup.enter.native="load"></el-input>
             </el-form-item>
 
             <el-form-item>
-
-                <el-button type="primary" @click="select">筛选</el-button>
-                <el-button type="primary" @click="load">刷新</el-button>
-                <el-button type="primary" @click="dialogVisible = true">ID搜索</el-button>
-                <el-button  @click="dialogVisible = true">导出</el-button>
-                <el-button  type="primary" @click="analysis">库存分析</el-button>
-                <el-switch size="medium"
-                           style="position:fixed;top:35px;right:50px"
-                           active-text="仅显示未过期库存"
-                           inactive-text="显示全部库存"
-                           font-size="50px"
-                           v-model="state"
-                           active-color="#00A854"
-                           active-value="1"
-                           inactive-color="#F04134"
-                           inactive-value="0"
-                           @change="allSelect"
-                           :disabled="disabled==-1?true:false"
-                >
-                </el-switch>
-
-
-                </el-row>
-
+                <el-button type="primary"@click="load" >搜索</el-button>
+                <el-button type="">导出</el-button>
             </el-form-item>
 
+
+
         </el-form>
-        <el-dialog title="ID搜索" center :visible.sync="dialogVisible" width="400px" @close="cancel">
-            <!-- 内容的主体区域 -->
-            <el-form  align="left" label-width="20px">
-                <el-form-item label="ID" prop="bloodIdTo" >
-                    <el-input v-model="bloodIdTo"></el-input>
-                </el-form-item>
-            </el-form>
-            <!-- 底部区域 -->
+
+        <el-dialog title="血液当前位置" center :visible.sync="caculateState" width="80%" >
+            <el-table :data="outData" style="min-width: 80%" border
+                      :header-cell-style="{'text-align': 'center','background': '#eef1f6'}" highlight-current-row
+                      @current-change="">
+                <el-table-column prop="blood_source" label="血液来源" min-width="10%" align="center">
+                </el-table-column>
+                <el-table-column prop="stay" label="血液位置" min-width="10%" align="center">
+                </el-table-column>
+                <el-table-column prop="name" label="使用患者姓名" min-width="10%" align="center"  >
+                </el-table-column>
+                <el-table-column prop="patient_id" label="使用患者ID " min-width="10%" align="center" >
+                </el-table-column>
+                <el-table-column prop="department" label="使用科室" min-width="10%" align="center"  >
+                </el-table-column>
+                <el-table-column prop="bloodState" label="状态" min-width="10%" align="center" >
+                </el-table-column>
+            </el-table>
             <span slot="footer" class="dialog-footer">
                     <el-button @click="cancel()">取 消</el-button>
-                    <el-button type="primary" @click="find">确 定</el-button>
+                    <el-button type="primary" @click="">支付</el-button>
                 </span>
         </el-dialog>
 
@@ -85,26 +59,24 @@
                   @current-change="">
             <el-table-column type="selection" width="55" align="center"></el-table-column>
 
-            <el-table-column prop="bloodId" label="血液id" min-width="10%" align="center">
-            </el-table-column>
-
             <el-table-column prop="varietyOfBlood" label="血液种类" min-width="10%" align="center">
             </el-table-column>
 
-            <el-table-column prop="hp" label="血液数量" min-width="10%" align="center">
+            <el-table-column prop="aboBloodType" label="血液abo类型" min-width="10%" align="center">
             </el-table-column>
 
             <el-table-column prop="rhBloodType" label="血液rh类型" min-width="10%" align="center">
             </el-table-column>
-            <el-table-column prop="aboBloodType" label="血液abo类型" min-width="10%" align="center">
+            <el-table-column prop="hp" label="血液总量" min-width="15%" align="center">
             </el-table-column>
-            <el-table-column prop="bloodStorgeTime" label="血液入库时间" min-width="15%" align="center">
+            <el-table-column prop="blood_source" label="血液来源" min-width="15%" align="center">
             </el-table-column>
-            <el-table-column prop="bloodFailureTime" label="血液失效时间" min-width="15%" align="center">
+            <el-table-column prop="name" label="使用患者姓名" min-width="10%" align="center"  >
             </el-table-column>
-            <el-table-column prop="bloodPosition" label="血液存储位置" min-width="15%" align="center">
-            </el-table-column>
-            <el-table-column prop="bloodStocksCondition" label="血液存储状态" min-width="10%" align="center">
+            <el-table-column label="操作" width="240" align="center">
+                <template slot-scope="scope">
+                    <el-button size="mini" type="danger" @click="concrete()":style="{ display: visiblePublish }">查看当前状态</el-button>
+                </template>
             </el-table-column>
         </el-table>
 
@@ -120,267 +92,82 @@
 <script src="../icons/iconfont.js"></script>
 <script>Vue.prototype.$ELEMENT = { size: 'medium' };</script>
 <script>
+
     (function () {
         var vm = window.vm = new Vue({
             el: '.data-manage-table',
             data() {
                 return {
-                    aboOptions: [{
-                        value: 'A',
-                        label: 'A'
-                    }, {
-                        value: 'B',
-                        label: 'B'
-                    }, {
-                        value: 'AB',
-                        label: 'AB'
-                    }, {
-                        value: 'O',
-                        label: 'O'
-                    }],
-                    rhOptions: [{
-                        value: '%2B',
-                        label: '+'
-                    }, {
-                        value: '-',
-                        label: '-'
-                    }],
-                    conOptions: [{
-                        value: '0',
-                        label: '未过期'
-                    }, {
-                        value: '1',
-                        label: '已过期'
-                    }, {
-                        value: '2',
-                        label: '已出库'
-                    }],
-                    state:'',
-                    disabled: "1",
-                    rhBloodType: "",
-                    aboBloodType: "",
-                    bloodStocksCondition: "",
+                    //表格信息
                     bloodId:"",
-                    bloodIdTo:" ",
-                    //弹出框显示
-                    dialogVisible: false,
+                    caculateState:false,
+                    isShow:false,
+                    visiblePublish: 'none',
+                    bloodState:"",
                     tableData: [
                         {
-                            bloodId: "",
-                            varietyOfBlood: "",
-                            hp: "",
-                            rhBloodType: "",
+                            blood_source:"",
+                            hp: " ",
                             aboBloodType: "",
-                            bloodFailureTime:"",
-                            bloodPosition: "",
-                            bloodStorgeTime: "",
-                            bloodStocksCondition: ""
+                            rhBloodType: "",
+                            varietyOfBlood:"",
+                            blood_source:"",
+                            placeState:"",
+                            name:"",
+                            patient_id:" ",
+                            stay: "",
+                            department:"",
                         }
-
                     ],
-                    analysisData:[
+                    outData:[
                         {
-                            totalHp: "",
-                            rh_blood_type:"",
-                            variety_of_blood:"",
-                            abo_blood_type:""
+                            blood_source:"",
+                            placeState:"",
+                            name:"",
+                            patient_id:" ",
+                            stay: "",
+                            department:"",
                         }
-                    ]
-
-                    //新增样本表单验证
+                    ],
                 }
             },
             created() {
-                this.load()
+                // this.load()
             },
             methods: {
                 load() {
+
                     this.tableData=undefined
-                    this.disabled = 1;
-                    fetch(`/partmyself//bloodStocks/getBloodInfoAll`).then(res => res.json()).then(res => {
+                    fetch(`http://localhost:9999/partmyself/bloodBaseInformation/getBloodGo?bloodId=${this.bloodId} `).then(res => res.json()).then(res => {
                         this.tableData = res.data
-                        console.log(res.data)
+                        this.outData=res.data
+                        console.log(this.tableData)
                     })
-                },
-                allSelect() {
-                    fetch(`/partmyself/bloodStocks/getBloodUseful?bloodCon=${this.state}`).then(res => res.json()).then(res => {
-                        this.tableData = res.data
-                        console.log(res.data)
-                    })
-                },
-                select() {
-                    this.disabled = -1;
-                    fetch(`/partmyself//bloodStocks/getBloodAboRh?abo=${this.aboBloodType}&rh=${this.rhBloodType}&except=${this.bloodStocksCondition}`).then(res => res.json()).then(res => {
-                        this.tableData = res.data
-                        console.log(res.data)
-                    })
-                },
-                myEcharts(mycars,mycarstow){
-                    //实例化
-                    const mychart1 = echarts.init(document.getElementById('main1'));
-                    const option = {
-                        legend: {
-                            data: ['各种血液库存情况']
-                        },
-                        xAxis: {
-                            type: 'category',
-                            data: mycars,
-                            axisLabel: {
-                                borderWidth: 1,
-                                clickable: true
-                            },
-                            silent: false,
-                            triggerEvent: true
-                        },
-                        yAxis: {
-                            type: 'value'
-                        },
-                        series: [
-                            {
-                                name: '血液库存情况',
-                                type: 'bar',
-                                data: mycarstow
-                            }
-                        ]
-                    };
-                    mychart1.setOption(option);
-                    mychart1.on('click', (params)=> {
-                        if(params.componentType == "xAxis"){
-                            alert("单击了"+params.value+"x轴标签");
-                            console.log(this.analysisData)
-                            this.pieChart(params.value);
-                        }else{
-                            alert("单击了"+params.name+"柱状图");
-                        }
-                    });
-                },
-                pieChart(valuement){
-                    const myChart = echarts.init(document.getElementById('main'));
-                    let arr = Array.from(this.analysisData)
-                    // console.log(arr)
-                    const abo = new Array();//string型数组
-                    const rh = new Array();//int型数组
-                    const name = new Array();
-                    for (let i = 0; i < arr.length; i++) {
-
-                        if (arr[i].variety_of_blood == valuement) {
-                            abo.push({value:arr[i].totalHp,name:arr[i].abo_blood_type});
-                            rh.push({value:arr[i].totalHp,name:arr[i].rh_blood_type});
-                            name.push(arr[i].rh_blood_type,arr[i].abo_blood_type);
-                        }
-                    }
-                    console.log(name)
-                    console.log(typeof name)
-                    option = {
-                        tooltip: {
-                            trigger: 'item',
-                            formatter: '{a} <br/>{b}: {c} ({d}%)'
-                        },
-                        legend: {
-                            data:name
-                        },
-                        series: [
-                            {
-                                name: 'RH',
-                                type: 'pie',
-                                selectedMode: 'single',
-                                radius: [0, '30%'],
-                                label: {
-                                    position: 'inner',
-                                    fontSize: 14
-                                },
-                                labelLine: {
-                                    show: false
-                                },
-                                data: rh
-                            },
-                            {
-                                name: 'ABO',
-                                type: 'pie',
-                                radius: ['45%', '60%'],
-                                labelLine: {
-                                    length: 30
-                                },
-                                label: {
-                                    formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
-                                    backgroundColor: '#F6F8FC',
-                                    borderColor: '#8C8D8E',
-                                    borderWidth: 1,
-                                    borderRadius: 4,
-                                    rich: {
-                                        a: {
-                                            color: '#6E7079',
-                                            lineHeight: 22,
-                                            align: 'center'
-                                        },
-                                        hr: {
-                                            borderColor: '#8C8D8E',
-                                            width: '100%',
-                                            borderWidth: 1,
-                                            height: 0
-                                        },
-                                        b: {
-                                            color: '#4C5058',
-                                            fontSize: 14,
-                                            fontWeight: 'bold',
-                                            lineHeight: 33
-                                        },
-                                        per: {
-                                            color: '#fff',
-                                            backgroundColor: '#4C5058',
-                                            padding: [3, 4],
-                                            borderRadius: 4
-                                        }
-                                    }
-                                },
-                                data: abo
-                            }
-                        ]
-                    };
-                    myChart.setOption(option);
-                },
-                draw(){
-                    let arr = Array.from(this.analysisData)
-                    // console.log(arr)
-                    let item = {};
-                    for (let i = 0; i < arr.length; i++) {
-                        item[arr[i].variety_of_blood] = ~~item[arr[i].variety_of_blood] + arr[i].totalHp;
-                    }
-                    // console.log(item);
-                    var mycars=new Array();//string型数组
-                    var mycarstow=new Array();//int型数组
-                    //先加载后台数据 对获取的数据进行分组 且写入对应位置的数组中
-                    Object.keys(item).forEach(function (key) {
-                        mycars.push(key);
-                        mycarstow.push(item[key]);
-                    })
-                    this.myEcharts(mycars,mycarstow);
-                    console.log(mycars);
-                    console.log(mycarstow);
-
-                },
-                analysis(){
-                    fetch(`/partmyself/bloodStocks/getVarityNumber`).then(res => res.json()).then(res => {
-                        this.analysisData = res.data
-                        // console.log(this.analysisData)
-                        //此是this的指向已经转变为method而非实例所以采用bind绑定this
-                        this.$options.methods.draw.bind(this)();
-                    })
-
-                },
-                find(){
-                    fetch(`/partmyself/bloodStocks/getBloodInfoAlone?bloodId=${this.bloodIdTo}`).then(res => res.json()).then(res => {
-                        this.tableData = res.data
-                        this.dialogVisible = false
-
-                    })
+                    this.visiblePublish= ''
                 },
                 cancel(){
-                    this.bloodIdTo = '',
-                    this.dialogVisible = false
-                }
-            }
+                    this.payForm.name=''
+                    this.payForm.patientId= ''
+                    this.payForm.totalMoney = ''
+                    this.caculateState = false
+                },
+                concrete(){
 
+                        if(this.placeState=="1"||this.placeState=="0"){
+
+                            console.log(1)
+                            console.log(this.placeState)
+                            if(this.placeState=="1"){
+                                this.bloodState="已过期"
+                            }else {
+                                this.bloodState="未过期"
+                            }
+                        }
+                        this.isShow=true
+                        this.caculateState=true
+                }
+                ,
+            }
         });
     })()
 </script>

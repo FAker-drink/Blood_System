@@ -49,7 +49,7 @@ public interface BloodFlowReportMapper extends BaseMapper<BloodFlowReport> {
     void insertFailTable(Timestamp startTime, Timestamp endTime);
     @Select("select blood_type,abo_blood_type,rh_blood_type,sum(total_out_hp) as total_out_hp,sum(total_in_hp) as total_in_hp,sum(total_fail_hp) as total_fail_hp from tmp_table group by abo_blood_type,rh_blood_type,blood_type;")
     List<BloodFlowReport> getBloodFlowReports();
-
-    ;
+    @Select("select blood_type,sum(total_out_hp) as total_out_hp,sum(total_in_hp) as total_in_hp,sum(total_fail_hp) as total_fail_hp from tmp_table group by blood_type;")
+    List<BloodFlowReport> getBloodFullReports();;
 
 }
