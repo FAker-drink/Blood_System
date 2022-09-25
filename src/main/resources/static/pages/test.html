@@ -31,27 +31,23 @@
 
         </el-form>
 
-        <el-dialog title="血液当前位置" center :visible.sync="caculateState" width="80%" >
-            <el-table :data="outData" style="min-width: 80%" border
+        <el-dialog title="血液当前位置" center :visible.sync="caculateState" width="45%" >
+            <el-table :data="tableData" style="min-width: 80%" border
                       :header-cell-style="{'text-align': 'center','background': '#eef1f6'}" highlight-current-row
                       @current-change="">
-                <el-table-column prop="blood_source" label="血液来源" min-width="10%" align="center">
+                <el-table-column prop="blood_source" label="血液来源" min-width="33%" align="center">
                 </el-table-column>
-                <el-table-column prop="stay" label="血液位置" min-width="10%" align="center">
+                <el-table-column prop="stay" label="血液位置" min-width="33%" align="center">
                 </el-table-column>
-                <el-table-column prop="name" label="使用患者姓名" min-width="10%" align="center"  >
+                <el-table-column prop="name" label="使用患者姓名" min-width="33%" align="center"  >
                 </el-table-column>
-                <el-table-column prop="patient_id" label="使用患者ID " min-width="10%" align="center" >
+                <el-table-column prop="patient_id" label="使用患者ID " min-width="33%" align="center" >
                 </el-table-column>
-                <el-table-column prop="department" label="使用科室" min-width="10%" align="center"  >
+                <el-table-column prop="department" label="使用科室" min-width="33%" align="center"  >
                 </el-table-column>
-                <el-table-column prop="bloodState" label="状态" min-width="10%" align="center" >
+                <el-table-column prop="bloodState" label="状态" min-width="33%" align="center"  v-if="isShow">
                 </el-table-column>
             </el-table>
-            <span slot="footer" class="dialog-footer">
-                    <el-button @click="cancel()">取 消</el-button>
-                    <el-button type="primary" @click="">支付</el-button>
-                </span>
         </el-dialog>
 
         <el-table :data="tableData" style="width: 100%" border
@@ -70,8 +66,6 @@
             <el-table-column prop="hp" label="血液总量" min-width="15%" align="center">
             </el-table-column>
             <el-table-column prop="blood_source" label="血液来源" min-width="15%" align="center">
-            </el-table-column>
-            <el-table-column prop="name" label="使用患者姓名" min-width="10%" align="center"  >
             </el-table-column>
             <el-table-column label="操作" width="240" align="center">
                 <template slot-scope="scope">
@@ -101,34 +95,23 @@
                     //表格信息
                     bloodId:"",
                     caculateState:false,
-                    isShow:false,
+                    isShow:true,
                     visiblePublish: 'none',
                     bloodState:"",
                     tableData: [
                         {
                             blood_source:"",
+                            placeState:"",
+                            patient_id:" ",
                             hp: " ",
+                            stay: "",
                             aboBloodType: "",
                             rhBloodType: "",
+                            name:"",
                             varietyOfBlood:"",
-                            blood_source:"",
-                            placeState:"",
-                            name:"",
-                            patient_id:" ",
-                            stay: "",
                             department:"",
                         }
-                    ],
-                    outData:[
-                        {
-                            blood_source:"",
-                            placeState:"",
-                            name:"",
-                            patient_id:" ",
-                            stay: "",
-                            department:"",
-                        }
-                    ],
+                    ]
                 }
             },
             created() {
@@ -140,7 +123,6 @@
                     this.tableData=undefined
                     fetch(`http://localhost:9999/partmyself/bloodBaseInformation/getBloodGo?bloodId=${this.bloodId} `).then(res => res.json()).then(res => {
                         this.tableData = res.data
-                        this.outData=res.data
                         console.log(this.tableData)
                     })
                     this.visiblePublish= ''
@@ -159,11 +141,13 @@
                             console.log(this.placeState)
                             if(this.placeState=="1"){
                                 this.bloodState="已过期"
-                            }else {
+                            }else{
                                 this.bloodState="未过期"
                             }
+                        }else {
+                            this.isShow=false
                         }
-                        this.isShow=true
+
                         this.caculateState=true
                 }
                 ,
