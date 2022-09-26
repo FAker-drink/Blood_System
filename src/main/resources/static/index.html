@@ -144,7 +144,7 @@
                                 </svg>
                                 <span>查费用查询</span>
                             </template>
-                            <el-menu-item index="form-1" @click="gotoPageHandle($event,'./pages/price/getPayPrice.html')">
+                            <el-menu-item index="form-1" @click="gotoPageHandle($event,'./pages/price/getBloodPrice.html')">
                                 <svg class="icon-svg aui-aside__menu-icon" aria-hidden="true">
                                     <use xlink:href="#icon-fire"></use>
                                 </svg>
@@ -156,7 +156,7 @@
                                 </svg>
                                 <span>个人费用结算</span>
                             </el-menu-item>
-                            <el-menu-item index="form-2" @click="gotoPageHandle($event,'./pages/transfusion/selectTransBlood.html')">
+                            <el-menu-item index="form-3" @click="gotoPageHandle($event,'./pages/transfusion/selectTransBlood.html')">
                                 <svg class="icon-svg aui-aside__menu-icon" aria-hidden="true">
                                     <use xlink:href="#icon-fire"></use>
                                 </svg>
@@ -171,13 +171,13 @@
                                 </svg>
                                 <span>用血报表</span>
                             </template>
-                            <el-menu-item index="list-basic" @click="gotoPageHandle($event,'./pages/bloodReport/patientBloodReport.html')">
+                            <el-menu-item index="list-basic-1" @click="gotoPageHandle($event,'./pages/bloodReport/patientBloodReport.html')">
                                 <svg class="icon-svg aui-aside__menu-icon" aria-hidden="true">
                                     <use xlink:href="#icon-fire"></use>
                                 </svg>
                                 <span>个人用血报表</span>
                             </el-menu-item>
-                            <el-menu-item index="list-basic" @click="gotoPageHandle($event,'./pages/bloodReport/departBloodReport.html')">
+                            <el-menu-item index="list-basic-2" @click="gotoPageHandle($event,'./pages/bloodReport/departBloodReport.html')">
                                 <svg class="icon-svg aui-aside__menu-icon" aria-hidden="true">
                                     <use xlink:href="#icon-fire"></use>
                                 </svg>
@@ -192,19 +192,24 @@
                                 </svg>
                                 <span>血液库存</span>
                             </template>
-                            <el-menu-item index="list-basic" @click="gotoPageHandle($event,'./pages/stocks/bloodStocks.html')">
+                            <el-menu-item index="list-blood-1" @click="gotoPageHandle($event,'./pages/stocks/bloodStocks.html')">
                                 <svg class="icon-svg aui-aside__menu-icon" aria-hidden="true">
                                     <use xlink:href="#icon-fire"></use>
                                 </svg>
-                                <span>科室用血报表</span>
+                                <span>血液库存分析</span>
                             </el-menu-item>
-                            <el-menu-item index="list-basic" @click="gotoPageHandle($event,'./pages/bloodBalence/bloodBalenceReport.html')">
+                            <el-menu-item index="list-blood-2" @click="gotoPageHandle($event,'./pages/bloodBalence/bloodBalenceReport.html')">
                                 <svg class="icon-svg aui-aside__menu-icon" aria-hidden="true">
                                     <use xlink:href="#icon-fire"></use>
                                 </svg>
                                 <span>血液流通情况</span>
-                            </el-menu-item> 
-
+                            </el-menu-item>
+                            <el-menu-item index="list-blood-3" @click="gotoPageHandle($event,'./pages/stocks/bloodTrack.html')">
+                                <svg class="icon-svg aui-aside__menu-icon" aria-hidden="true">
+                                    <use xlink:href="#icon-fire"></use>
+                                </svg>
+                                <span>血液流通情况</span>
+                            </el-menu-item>
                         </el-submenu>
 
                         <el-submenu index="error" :popper-append-to-body="false">
@@ -313,21 +318,13 @@
                         <svg slot="label" class="aui-content--tabs-icon-nav icon-svg" aria-hidden="true">
                             <use xlink:href="#icon-home"></use>
                         </svg>
-                        <iframe src="pages/home.html"></iframe>
+                        <iframe src="pages/stocks/bloodStocks.html"></iframe>
                     </el-tab-pane>
                     <el-tab-pane v-for="(item,index) in mainTabs" :key="index" :label="item.label" :name="item.name" closable>
                         <i :class="item.iconClass"></i>
                         <iframe :src="item.url"></iframe>
                     </el-tab-pane>
-                    <!--          <el-tab-pane label="标签页3" name="3" closable>标签页3</el-tab-pane>-->
-                    <!--          <el-tab-pane label="标签页5" name="5" closable>-->
-                    <!--            <span slot="label"><i class="el-icon-date"></i> 标签页5</span>-->
-                    <!--          </el-tab-pane>-->
-                    <!--          <el-tab-pane label="标签页6" name="6" closable>标签页6</el-tab-pane>-->
-                    <!--          <el-tab-pane label="标签页7" name="7" closable>标签页7</el-tab-pane>-->
-                    <!--          <el-tab-pane label="标签页8" name="8" closable>标签页8</el-tab-pane>-->
-                    <!--          <el-tab-pane label="标签页9" name="9" closable>标签页9</el-tab-pane>-->
-                    <!--          <el-tab-pane label="标签页10" name="10" closable>标签页10</el-tab-pane>-->
+  <!--          <el-tab-pane label="标签页10" name="10" closable>标签页10</el-tab-pane>-->
                 </el-tabs>
             </main>
             <!-- aui-footer -->

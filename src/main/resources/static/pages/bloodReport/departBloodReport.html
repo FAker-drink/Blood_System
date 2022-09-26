@@ -80,7 +80,8 @@
 
                     //时间数据的存放
                     formDate:[],
-
+                    myChart:null,
+                    mychart1:null,
                     //表格信息
                     tableData: [
                         {
@@ -108,10 +109,15 @@
                 },
                 myEcharts(mycars,mycarstow){
                     //实例化
-                    const mychart1 = echarts.init(document.getElementById('main1'));
-                    const option = {
+                    this.mychart1 = echarts.init(document.getElementById('main1'));
+                    option = {
+                        title:{
+                            text:"科室各类血液使用情况",
+                            left:'center'
+                        },
                         legend: {
-                            data: ['科室血液使用情况']
+                            top:'8%',
+                            data: ['血液使用情况']
                         },
                         xAxis: {
                             type: 'category',
@@ -134,24 +140,24 @@
                             }
                         ]
                     };
-                    mychart1.setOption(option);
-                    mychart1.on('click', (params)=> {
+                    this.mychart1.setOption(option);
+                    this.mychart1.on('click', (params)=> {
                         if(params.componentType == "xAxis"){
-                            alert("单击了"+params.value+"x轴标签");
                             console.log(this.tableData)
+                            if (this.myChart!=null){
+                                this.myChart.dispose()
+                            }
                             this.pieChart(params.value);
-                        }else{
-                            alert("单击了"+params.name+"柱状图");
                         }
                     });
                 },
                 pieChart(valuement){
-                    var myChart = echarts.init(document.getElementById('main'));
+                    this.myChart = echarts.init(document.getElementById('main'));
                     let arr = Array.from(this.tableData)
                     // console.log(arr)
-                    var abo=new Array();//string型数组
-                    var rh=new Array();//int型数组
-                    var name = new Array();
+                    const abo = new Array();//string型数组
+                    const rh = new Array();//int型数组
+                    const name = new Array();
                     for (let i = 0; i < arr.length; i++) {
 
                         if (arr[i].bloodComponents == valuement) {
@@ -163,11 +169,16 @@
                     console.log(name)
                     console.log(typeof name)
                     option = {
+                        title:{
+                            text:"血液类型明细",
+                            left:'center'
+                        },
                         tooltip: {
                             trigger: 'item',
                             formatter: '{a} <br/>{b}: {c} ({d}%)'
                         },
                         legend: {
+                            top: '8%',
                             data:name
                         },
                         series: [
@@ -228,7 +239,8 @@
                             }
                         ]
                     };
-                    myChart.setOption(option);
+
+                    this.myChart.setOption(option);
                 },
                 draw(){
                     let arr = Array.from(this.tableData)
@@ -249,6 +261,12 @@
 
                 },
                 load() {
+                    if (this.myChart!=null){
+                        this.myChart.dispose()
+                    }
+                    if(this.mychart1!=null){
+                        this.mychart1.dispose()
+                    }
 
                     this.tableData=undefined
                     // console.log(typeof this.formDate[0])

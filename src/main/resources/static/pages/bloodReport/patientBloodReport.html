@@ -17,7 +17,9 @@
                  @submit.native.prevent
         >
             <!-- <el-button type="primary" style="margin-right: 40px;">批量删除</el-button> -->
-
+            <el-form-item label="患者病历号">
+                <el-input placeholder="请输入病历号" v-model="patientId" @keyup.enter.native="load"></el-input>
+            </el-form-item>
             <el-form-item label="日期">
                 <el-date-picker v-model="formDate" type="datetimerange" size="small" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"
                                 range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
@@ -38,9 +40,10 @@
                   :header-cell-style="{'text-align': 'center','background': '#eef1f6'}" highlight-current-row
                   @current-change=""
         >
-            <el-table-column prop="patientId" label="科室" min-width="12%" align="center">
+            <el-table-column prop="patientId" label="患者病历号" min-width="12%" align="center">
             </el-table-column>
-
+            <el-table-column prop="name" label="患者姓名" min-width="12%" align="center">
+            </el-table-column>
             <el-table-column prop="bloodComponents" label="血液类型" min-width="15%" align="center">
             </el-table-column>
 
@@ -54,8 +57,8 @@
         </el-table>
 
         <el-row :gutter="20">
-            <el-col :span="12"><div id="main1" style="border:1px;width:80%;min-height:300px;height:auto;margin-top:5%;"></div></el-col>
-            <el-col :span="12"><div id="main" style="border:1px ;width:80%;min-height:300px;height:auto;margin-top:5%;"></div></el-col>
+            <el-col :span="12"><div id="main1" style="border:1px;width:80%;min-height:400px;height:auto;margin-top:5%;"></div></el-col>
+            <el-col :span="12"><div id="main" style="border:1px ;width:80%;min-height:400px;height:auto;margin-top:5%;"></div></el-col>
 
         </el-row>
     </template>
@@ -75,7 +78,8 @@
                 return {
                     //部门选择
                     patientId:'',
-
+                    myChart:null,
+                    mychart1:null,
                     //时间数据的存放
                     formDate:[],
 
@@ -83,6 +87,7 @@
                     tableData: [
                         {
                             patientId:'',
+                            name:'',
                             bloodComponents: "",
                             totalHp: "",
                             aboBloodType: "",
@@ -106,15 +111,20 @@
                 },
                 myEcharts(mycars,mycarstow){
                     //实例化
-                    var mychart1 =  echarts.init(document.getElementById('main1'));
+                    this.mychart1 =  echarts.init(document.getElementById('main1'));
                     option = {
+                        title: {
+                            text: "患者各类血液使用情况",
+                            left: 'center'
+                        },
                         legend: {
-                            data: ['科室血液使用情况']
+                            top: '8%',
+                            data: ['血液消耗情况']
                         },
                         xAxis: {
                             type: 'category',
                             data: mycars,
-                            axisLabel:{
+                            axisLabel: {
                                 borderWidth: 1,
                                 clickable: true
                             },
@@ -126,30 +136,29 @@
                         },
                         series: [
                             {
-                                name: '科室血液使用情况',
+                                name: '患者各类血液使用情况',
                                 type: 'bar',
                                 data: mycarstow
                             }
                         ]
                     };
-                    mychart1.setOption(option);
-                    mychart1.on('click', (params)=> {
+                    this.mychart1.setOption(option);
+                    this.mychart1.on('click', (params)=> {
                         if(params.componentType == "xAxis"){
-                            alert("单击了"+params.value+"x轴标签");
-                            console.log(this.tableData)
+                            if (this.myChart!=null){
+                                this.myChart.dispose()
+                            }
                             this.pieChart(params.value);
-                        }else{
-                            alert("单击了"+params.name+"柱状图");
                         }
                     });
                 },
                 pieChart(valuement){
-                    var myChart = echarts.init(document.getElementById('main'));
+                     this.myChart = echarts.init(document.getElementById('main'));
                     let arr = Array.from(this.tableData)
                     // console.log(arr)
-                    var abo=new Array();//string型数组
-                    var rh=new Array();//int型数组
-                    var name = new Array();
+                    const abo = new Array();//string型数组
+                    const rh = new Array();//int型数组
+                    const name = new Array();
                     for (let i = 0; i < arr.length; i++) {
 
                         if (arr[i].bloodComponents == valuement) {
@@ -161,11 +170,16 @@
                     console.log(name)
                     console.log(typeof name)
                     option = {
+                        title:{
+                            text:"血液类型明细",
+                            left:'center'
+                        },
                         tooltip: {
                             trigger: 'item',
                             formatter: '{a} <br/>{b}: {c} ({d}%)'
                         },
                         legend: {
+                            top: '8%',
                             data:name
                         },
                         series: [
@@ -226,7 +240,7 @@
                             }
                         ]
                     };
-                    myChart.setOption(option);
+                    this.myChart.setOption(option);
                 },
                 draw(){
                     let arr = Array.from(this.tableData)
@@ -247,10 +261,15 @@
 
                 },
                 load() {
-
+                    //清空画布
+                    if (this.myChart!=null){
+                        this.myChart.dispose()
+                    }
+                    if(this.mychart1!=null){
+                        this.mychart1.dispose()
+                    }
                     this.tableData=undefined
-                    // console.log(typeof this.formDate[0])
-                    // console.log(this.patientId)
+
                     fetch(`/partmyself/bloodBaseInformation/getPersonBloodInfo?patientId=${this.patientId}&startTime=${this.formDate[0]} &endTime=${this.formDate[1]}`).then(res => res.json()).then(res => {
                         this.tableData = res.data
                         //此是this的指向已经转变为method而非实例所以采用bind绑定this

@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>血液追踪</title>
     <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.ico">
-    <link rel="stylesheet" href="../element-theme/blue/index.css">
-    <script src="echarts.js"></script>
+    <link rel="stylesheet" href="../../element-theme/blue/index.css">
+    <script src="../echarts.js"></script>
 </head>
 
 <body>
@@ -39,13 +39,13 @@
                 </el-table-column>
                 <el-table-column prop="stay" label="血液位置" min-width="33%" align="center">
                 </el-table-column>
-                <el-table-column prop="name" label="使用患者姓名" min-width="33%" align="center"  >
+                <el-table-column prop="name" label="使用患者姓名" min-width="33%" align="center"  v-if="isShow">
                 </el-table-column>
-                <el-table-column prop="patient_id" label="使用患者ID " min-width="33%" align="center" >
+                <el-table-column prop="patient_id" label="使用患者ID " min-width="33%" align="center" v-if="isShow">
                 </el-table-column>
-                <el-table-column prop="department" label="使用科室" min-width="33%" align="center"  >
+                <el-table-column prop="department" label="使用科室" min-width="33%" align="center"  v-if="isShow">
                 </el-table-column>
-                <el-table-column prop="bloodState" label="状态" min-width="33%" align="center"  v-if="isShow">
+                <el-table-column prop="bloodState" label="状态" min-width="33%" align="center"  v-if="!isShow">
                 </el-table-column>
             </el-table>
         </el-dialog>
@@ -81,9 +81,9 @@
     </template>
 </div>
 
-<script src="../plugins/vue-2.5.17/vue.js"></script>
-<script src="../plugins/element-2.4.5/index.js"></script>
-<script src="../icons/iconfont.js"></script>
+<script src="../../plugins/vue-2.5.17/vue.js"></script>
+<script src="../../plugins/element-2.4.5/index.js"></script>
+<script src="../../icons/iconfont.js"></script>
 <script>Vue.prototype.$ELEMENT = { size: 'medium' };</script>
 <script>
 
@@ -97,7 +97,6 @@
                     caculateState:false,
                     isShow:true,
                     visiblePublish: 'none',
-                    bloodState:"",
                     tableData: [
                         {
                             blood_source:"",
@@ -134,18 +133,16 @@
                     this.caculateState = false
                 },
                 concrete(){
-
-                        if(this.placeState=="1"||this.placeState=="0"){
-
-                            console.log(1)
-                            console.log(this.placeState)
-                            if(this.placeState=="1"){
-                                this.bloodState="已过期"
+                        console.log(this.tableData[0].placeState)
+                        if(this.tableData[0].placeState=="1"||this.tableData[0].placeState=="0"){
+                            if(this.tableData[0].placeState=="1"){
+                                this.tableData[0].bloodState="已过期"
                             }else{
-                                this.bloodState="未过期"
+                                this.tableData[0].bloodState="未过期"
                             }
-                        }else {
                             this.isShow=false
+                        }else {
+                            this.isShow=true
                         }
 
                         this.caculateState=true

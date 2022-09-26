@@ -110,7 +110,9 @@ public class BloodBaseInformationController {
             //为0代表未过期;为1代表已过期
             getResult.put("stay","库内："+bloodListAlone.get(0).getBloodPosition());
             System.out.println(getResult);
-            return Result.success(getResult);
+            List myList = new ArrayList();
+            myList.add(getResult);
+            return Result.success(myList);
         } else if(placeState.equals("2")){
             patientTransfusionInformationService.getGO(bloodId).forEach(getResult::put);
             getResult.put("stay","已出库");

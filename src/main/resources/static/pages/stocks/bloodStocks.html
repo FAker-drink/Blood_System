@@ -14,7 +14,7 @@
 <div class="data-manage-table">
     <template>
         <el-form ref="form" :inline="true"  style="padding:20px 20px 0 20px;">
-            <el-form-item label ="血液价格表">
+            <el-form-item label ="血液库存">
             </el-form-item>
 
             <el-form-item label="ABO">
@@ -48,7 +48,7 @@
                 <el-switch size="medium"
                            style="position:fixed;top:35px;right:50px"
                            active-text="仅显示未过期库存"
-                           inactive-text="显示全部库存"
+                           inactive-text="显示全部"
                            font-size="50px"
                            v-model="state"
                            active-color="#00A854"
@@ -60,8 +60,6 @@
                 >
                 </el-switch>
 
-
-                </el-row>
 
             </el-form-item>
 
